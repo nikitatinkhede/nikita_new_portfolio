@@ -52,10 +52,11 @@ export const ContactSection = () => {
         body: JSON.stringify(formState),
       });
 
-      const result = await response.json();
+      // The response may be empty or HTML (e.g. a 404 page), so don't assume JSON
+      const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to send message. Please try again.');
+        throw new Error(result.error || 'The message service is unavailable right now. Please try again later.');
       }
 
       setSubmitSuccess(true);
