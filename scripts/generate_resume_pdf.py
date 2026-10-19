@@ -76,7 +76,7 @@ def build_pdf():
     # Name and Header
     story.append(Paragraph("NIKITA TINKHEDE", title_style))
     story.append(Spacer(1, 4))
-    story.append(Paragraph("Nagpur, Maharashtra | nikitatinkhede80@gmail.com", contact_style))
+    story.append(Paragraph("Nagpur, Maharashtra | 9307929114 | nikitatinkhede80@gmail.com", contact_style))
     story.append(Paragraph("in LinkedIn | ■ GitHub | ■ Portfolio", contact_style))
     story.append(Spacer(1, 6))
 
@@ -86,7 +86,7 @@ def build_pdf():
     # Professional Summary
     story.append(Paragraph("PROFESSIONAL SUMMARY", section_heading))
     summary_text = (
-        "Junior Software Developer with 1.5 years of experience building responsive web applications using "
+        "Software Developer with 1.5 years of experience building responsive web applications using "
         "React.js, Next.js, and Material UI (MUI), with expertise integrating REST APIs. Experienced in AI-powered "
         "solutions using LLMs, LangChain, LangGraph, and Retrieval-Augmented Generation (RAG), including single- and multi-agent systems."
     )
@@ -107,7 +107,7 @@ def build_pdf():
     # Professional Experience
     story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#e2e8f0"), spaceBefore=2, spaceAfter=4))
     story.append(Paragraph("PROFESSIONAL EXPERIENCE", section_heading))
-    exp_header = "<b>Junior Software Developer — Valethi Technology Pvt. Ltd.</b> &nbsp;|&nbsp; May 2025 – Present"
+    exp_header = "<b>Software Developer — Valethi Technology Pvt. Ltd.</b> &nbsp;|&nbsp; May 2025 – Present"
     story.append(Paragraph(exp_header, body_style))
     story.append(Paragraph("<i>Nagpur, Maharashtra</i>", body_style))
     story.append(Spacer(1, 2))

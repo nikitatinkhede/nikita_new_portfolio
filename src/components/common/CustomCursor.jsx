@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+
+const INTERACTIVE_SELECTOR = 'a, button, [role="button"], label, select, .interactive-hover';
+// Over these the custom cursor hides so the native text caret (or the iframe's own cursor) shows
+const NATIVE_CURSOR_SELECTOR = 'input, textarea, [contenteditable="true"], iframe';
 
 export const CustomCursor = () => {
-  const [position, setPosition] = useState({ x: -100, y: -100 });
-  const [isHovered, setIsHovered] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
-  const [cursorText, setCursorText] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
   const [isEnabled] = useState(() => {
     if (typeof window === 'undefined') return false;
     const finePointer = window.matchMedia('(pointer: fine)').matches;
@@ -14,6 +13,19 @@ export const CustomCursor = () => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     return finePointer && canHover && !reducedMotion;
   });
+  const [isVisible, setIsVisible] = useState(false);
+  const [mode, setMode] = useState('default'); // 'default' | 'hover' | 'native'
+  const [label, setLabel] = useState('');
+  const [isPressed, setIsPressed] = useState(false);
+  const [ripples, setRipples] = useState([]);
+
+  // Motion values move the cursor without re-rendering React on every mouse move
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const ringX = useSpring(mouseX, { stiffness: 380, damping: 30, mass: 0.5 });
+  const ringY = useSpring(mouseY, { stiffness: 380, damping: 30, mass: 0.5 });
+  const tagX = useSpring(mouseX, { stiffness: 260, damping: 26, mass: 0.6 });
+  const tagY = useSpring(mouseY, { stiffness: 260, damping: 26, mass: 0.6 });
 
   useEffect(() => {
     if (!isEnabled) return;
@@ -28,120 +40,127 @@ export const CustomCursor = () => {
     if (!isEnabled) return;
 
     const handleMouseMove = (e) => {
-      setPosition({ x: e.clientX, y: e.clientY });
-      if (!isVisible) setIsVisible(true);
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+      setIsVisible(true);
     };
-
-    const handleMouseDown = () => setIsClicked(true);
-    const handleMouseUp = () => setIsClicked(false);
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
 
     const handleMouseOver = (e) => {
-      const target = e.target;
-      const textTrigger = target.closest('[data-cursor-text]');
-      const isInteractive =
-        target.closest('a') ||
-        target.closest('button') ||
-        target.closest('input') ||
-        target.closest('textarea') ||
-        target.closest('[role="button"]') ||
-        target.closest('.interactive-hover');
+      const target = e.target instanceof Element ? e.target : null;
+      if (!target) return;
 
-      if (textTrigger) {
-        setCursorText(textTrigger.getAttribute('data-cursor-text') || '');
-        setIsHovered(true);
-      } else if (isInteractive) {
-        setCursorText('');
-        setIsHovered(true);
-      } else {
-        setCursorText('');
-        setIsHovered(false);
+      if (target.closest(NATIVE_CURSOR_SELECTOR)) {
+        setMode('native');
+        setLabel('');
+        return;
       }
+
+      const labelled = target.closest('[data-cursor-text]');
+      setLabel(labelled ? labelled.getAttribute('data-cursor-text') || '' : '');
+      setMode(labelled || target.closest(INTERACTIVE_SELECTOR) ? 'hover' : 'default');
     };
+
+    const handleMouseDown = (e) => {
+      setIsPressed(true);
+      setRipples((prev) => [...prev, { id: `${e.timeStamp}-${e.clientX}`, x: e.clientX, y: e.clientY }]);
+    };
+
+    const handleMouseUp = () => setIsPressed(false);
+    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseEnter = () => setIsVisible(true);
+    const root = document.documentElement;
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
+    root.addEventListener('mouseleave', handleMouseLeave);
+    root.addEventListener('mouseenter', handleMouseEnter);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
+      root.removeEventListener('mouseleave', handleMouseLeave);
+      root.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [isEnabled, isVisible]);
+  }, [isEnabled, mouseX, mouseY]);
 
-  if (!isEnabled || !isVisible) {
+  if (!isEnabled) {
     return null;
   }
 
-  const hasLabel = Boolean(cursorText);
-  const ringSize = hasLabel ? 72 : isHovered ? 48 : 32;
+  const isHidden = !isVisible || mode === 'native';
+  const isHover = mode === 'hover';
+  const ringSize = isHover ? 56 : 36;
 
   return (
-    <>
-      {/* Outer Follower Ring */}
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[9999]">
+      {/* Click ripples */}
+      {ripples.map((ripple) => (
+        <motion.span
+          key={ripple.id}
+          className="absolute w-4 h-4 -ml-2 -mt-2 rounded-full border-2 border-indigo-500 dark:border-cyan-400"
+          style={{ left: ripple.x, top: ripple.y }}
+          initial={{ scale: 0.5, opacity: 0.9 }}
+          animate={{ scale: 4.5, opacity: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+          onAnimationComplete={() => setRipples((prev) => prev.filter((r) => r.id !== ripple.id))}
+        />
+      ))}
+
+      {/* Trailing ring (zero-size anchor at the pointer; flex centres the ring on it) */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] rounded-full border border-indigo-500/80 dark:border-indigo-400/90 flex items-center justify-center transition-colors duration-150"
-        style={{
-          boxShadow: isHovered
-            ? '0 0 25px 3px rgba(99, 102, 241, 0.45)'
-            : '0 0 10px rgba(99, 102, 241, 0.2)',
-          backgroundColor: isHovered
-            ? 'rgba(99, 102, 241, 0.15)'
-            : 'transparent',
-          backdropFilter: hasLabel ? 'blur(4px)' : 'none',
-        }}
-        animate={{
-          x: position.x - ringSize / 2,
-          y: position.y - ringSize / 2,
-          width: ringSize,
-          height: ringSize,
-          scale: isClicked ? 0.88 : 1,
-        }}
-        transition={{
-          type: 'spring',
-          damping: 24,
-          stiffness: 320,
-          mass: 0.45,
-        }}
+        className="absolute left-0 top-0 w-0 h-0 flex items-center justify-center"
+        style={{ x: ringX, y: ringY }}
       >
+        <motion.div
+          className="shrink-0 rounded-full border-2 border-indigo-500/80 dark:border-indigo-400/90"
+          animate={{
+            width: ringSize,
+            height: ringSize,
+            opacity: isHidden ? 0 : 1,
+            scale: isPressed ? 0.8 : 1,
+            backgroundColor: isHover ? 'rgba(99, 102, 241, 0.14)' : 'rgba(99, 102, 241, 0)',
+            boxShadow: isHover ? '0 0 24px 2px rgba(99, 102, 241, 0.45)' : '0 0 0px 0px rgba(99, 102, 241, 0)',
+          }}
+          transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+        />
+      </motion.div>
+
+      {/* Precise dot */}
+      <motion.div
+        className="absolute left-0 top-0 w-0 h-0 flex items-center justify-center"
+        style={{ x: mouseX, y: mouseY }}
+      >
+        <motion.div
+          className="shrink-0 w-2 h-2 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 shadow-[0_0_10px_rgba(99,102,241,0.7)]"
+          animate={{
+            opacity: isHidden ? 0 : 1,
+            scale: isHover ? 0.6 : isPressed ? 1.6 : 1,
+          }}
+          transition={{ type: 'spring', stiffness: 600, damping: 30 }}
+        />
+      </motion.div>
+
+      {/* Action tag beside the pointer, so it never covers the button text */}
+      <motion.div className="absolute left-0 top-0" style={{ x: tagX, y: tagY }}>
         <AnimatePresence>
-          {hasLabel && (
+          {label && !isHidden && (
             <motion.span
-              key="label"
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
+              key={label}
+              initial={{ opacity: 0, scale: 0.6, x: 14, y: 14 }}
+              animate={{ opacity: 1, scale: 1, x: 22, y: 22 }}
               exit={{ opacity: 0, scale: 0.6 }}
-              className="text-[9px] font-bold tracking-widest uppercase text-indigo-600 dark:text-cyan-300 font-mono"
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              className="absolute left-0 top-0 whitespace-nowrap rounded-full px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-white bg-gradient-to-r from-indigo-600 to-indigo-700 shadow-lg shadow-indigo-500/30"
             >
-              {cursorText}
+              {label}
             </motion.span>
           )}
         </AnimatePresence>
       </motion.div>
-
-      {/* Inner Core Dot */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-cyan-400 shadow-sm"
-        animate={{
-          x: position.x - 3,
-          y: position.y - 3,
-          scale: isHovered ? 0 : 1,
-        }}
-        transition={{
-          type: 'spring',
-          damping: 40,
-          stiffness: 850,
-          mass: 0.08,
-        }}
-      />
-    </>
+    </div>
   );
 };

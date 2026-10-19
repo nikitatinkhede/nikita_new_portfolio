@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Code2, 
-  Terminal, 
-  Globe, 
-  Server, 
-  Database, 
-  Cpu, 
+import React, { useRef } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  Code2,
+  Terminal,
+  Globe,
+  Server,
+  Database,
+  Cpu,
   Layers,
+  Webhook,
+  Sparkles,
+  FileSearch,
   Bot
 } from 'lucide-react';
+import {
+  siJavascript,
+  siPython,
+  siReact,
+  siNextdotjs,
+  siMui,
+  siFastapi,
+  siMysql,
+  siPostgresql,
+  siLangchain,
+  siLanggraph
+} from 'simple-icons';
 import { portfolioData } from '../../data/portfolioData';
+import { SectionHeader } from '../common/SectionHeader';
 
 const categoryIcons = {
   Languages: Terminal,
@@ -20,153 +36,212 @@ const categoryIcons = {
   "AI & Machine Learning": Cpu,
 };
 
+// brand: Simple Icons logo drawn in its brand colour; Icon + color: lucide icon for skills without a logo.
+// Icons sit on a dark tile in both themes, so `color` only overrides brand colours too dark for that tile.
 const skillDetails = {
-  "React.js": { level: "Production", context: "Component architecture, hooks, state management & UI optimization" },
-  "Next.js": { level: "Production", context: "Next.js 14 App Router, SSR, performance dashboards & route handlers" },
-  "Material UI (MUI)": { level: "Production", context: "Design systems, accessible components, KPI cards & custom theming" },
-  "FastAPI": { level: "Production", context: "High-performance Python backend, async endpoints & agent orchestration" },
-  "REST API": { level: "Production", context: "Dynamic CRUD, Axios integration, token handling & client sync" },
-  "JavaScript": { level: "Core", context: "ES6+, asynchronous programming, DOM manipulation & frontend logic" },
-  "Python": { level: "Core", context: "Data structures, agent pipelines, LangChain integrations & backend services" },
-  "SQL": { level: "Core", context: "Relational queries, schema design, joins & performance indexing" },
-  "MySQL": { level: "Database", context: "Relational data management & relational integrity" },
-  "PostgreSQL": { level: "Database", context: "Enterprise relational database with structured query optimization" },
-  "LLMs": { level: "AI Specialist", context: "Prompt engineering, evaluation benchmarks & reasoning over candidate data" },
-  "LangChain": { level: "AI Specialist", context: "Chains, prompt templates, output parsers & LLM wrappers" },
-  "LangGraph": { level: "AI Specialist", context: "Stateful multi-node agent graphs, cyclical workflows & human-in-the-loop" },
-  "RAG (Retrieval-Augmented Generation)": { level: "AI Specialist", context: "Context injection, semantic search & knowledge-grounded generation" },
-  "AI Agents (Single & Multi-Agent Systems)": { level: "AI Specialist", context: "Autonomous agent coordination, reasoning nodes & supervisor architecture" },
+  "JavaScript": { brand: siJavascript },
+  "Python": { brand: siPython },
+  "SQL": { Icon: Database, color: "#22D3EE" },
+  "React.js": { brand: siReact },
+  "Next.js": { brand: siNextdotjs, color: "#FFFFFF" },
+  "Material UI (MUI)": { brand: siMui, label: "Material UI" },
+  "FastAPI": { brand: siFastapi },
+  "REST API": { Icon: Webhook, color: "#818CF8" },
+  "MySQL": { brand: siMysql },
+  "PostgreSQL": { brand: siPostgresql },
+  "LLMs": { Icon: Sparkles, color: "#818CF8" },
+  "LangChain": { brand: siLangchain },
+  "LangGraph": { brand: siLanggraph },
+  "RAG (Retrieval-Augmented Generation)": { Icon: FileSearch, color: "#22D3EE", label: "RAG" },
+  "AI Agents (Single & Multi-Agent Systems)": { Icon: Bot, color: "#818CF8", label: "AI Agents" },
+};
+
+const fallbackDetails = { Icon: Layers, color: "#818CF8" };
+
+// Deterministic pseudo-random scatter so every chip flies in from its own spot
+const scatterFor = (i) => {
+  const rand = (n) => {
+    const v = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453;
+    return v - Math.floor(v);
+  };
+  return { x: (rand(1) - 0.5) * 260, y: (rand(2) - 0.5) * 180, rotate: (rand(3) - 0.5) * 60 };
+};
+
+const panelVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.96, transition: { duration: 0.3 } },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -30, transition: { duration: 0.2 } },
+  visible: (rowIdx) => ({
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, delay: 0.15 + rowIdx * 0.08, ease: [0.16, 1, 0.3, 1] },
+  }),
+};
+
+const chipVariants = {
+  hidden: ({ scatter }) => ({
+    opacity: 0,
+    ...scatter,
+    scale: 0.3,
+    filter: 'blur(6px)',
+    transition: { duration: 0.25 },
+  }),
+  visible: ({ index }) => ({
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: { type: 'spring', stiffness: 140, damping: 13, mass: 0.8, delay: 0.3 + index * 0.045 },
+  }),
+};
+
+const SkillIcon = ({ meta, className }) => {
+  if (meta.brand) {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+        <path d={meta.brand.path} />
+      </svg>
+    );
+  }
+  const Icon = meta.Icon;
+  return <Icon className={className} aria-hidden="true" />;
 };
 
 export const SkillsSection = () => {
   const { skills } = portfolioData;
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const reduceMotion = useReducedMotion();
+  const panelRef = useRef(null);
+  let chipIndex = 0;
 
-  const categories = ['All', ...skills.map(s => s.category)];
-
-  const filteredSkills = selectedCategory === 'All' 
-    ? skills 
-    : skills.filter(s => s.category === selectedCategory);
+  // Cursor-following spotlight: update CSS variables directly so React doesn't re-render on every move
+  const handlePanelMouseMove = (e) => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    panel.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+    panel.style.setProperty('--my', `${e.clientY - rect.top}px`);
+  };
 
   return (
     <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8 relative">
-      <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 border border-cyan-200/60 dark:border-cyan-800/60 mb-3">
-            <Code2 className="w-3.5 h-3.5" />
-            <span>Technical Capabilities</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
-            Comprehensive Skills & AI Stack
-          </h2>
-          <p className="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-400">
-            Every technology is verified from professional industry experience at Valethi Technology and specialized AI projects.
-          </p>
+      {/* Drifting ambient glow behind the panel */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/3 left-[8%] w-72 h-72 rounded-full bg-indigo-500/20 blur-3xl animate-blob" />
+        <div className="absolute bottom-16 right-[8%] w-72 h-72 rounded-full bg-cyan-500/15 blur-3xl animate-blob [animation-delay:-7s]" />
+      </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 interactive-hover ${
-                    isActive
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-105'
-                      : 'glass-panel text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+      <div className="max-w-5xl mx-auto">
+        <SectionHeader
+          number="02"
+          label="Skills"
+          icon={Code2}
+          title={<>Skills & <span className="gradient-text-indigo">AI Stack</span></>}
+          subtitle="The tools I use to build web apps and AI agents."
+        />
 
-        {/* Skill Category Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredSkills.map((skillGroup) => {
-              const Icon = categoryIcons[skillGroup.category] || Layers;
-              const isAIML = skillGroup.category === 'AI & Machine Learning';
+        {/* Skill Panel: replays its entrance each time it scrolls into view */}
+        <motion.div
+          ref={panelRef}
+          onMouseMove={handlePanelMouseMove}
+          variants={panelVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
+          className="group/panel animated-border glass-panel relative rounded-3xl px-5 sm:px-8 py-2"
+        >
+          {/* Cursor spotlight */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-500 group-hover/panel:opacity-100"
+            style={{
+              background:
+                'radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(99, 102, 241, 0.14), transparent 45%)',
+            }}
+          />
+
+          <div className="relative divide-y divide-slate-200/70 dark:divide-white/5">
+            {skills.map((group, rowIdx) => {
+              const CategoryIcon = categoryIcons[group.category] || Layers;
 
               return (
                 <motion.div
-                  key={skillGroup.category}
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.35 }}
-                  className={`glass-card p-6 sm:p-7 rounded-3xl relative overflow-hidden group border ${
-                    isAIML
-                      ? 'border-violet-500/40 dark:border-violet-500/30 lg:col-span-2'
-                      : 'border-slate-200/80 dark:border-white/5'
-                  }`}
+                  key={group.category}
+                  custom={rowIdx}
+                  variants={rowVariants}
+                  className="group/row relative flex flex-col md:flex-row md:items-center gap-3 md:gap-6 py-5"
                 >
-                  {/* Decorative ambient glow */}
-                  <div 
-                    className={`absolute -right-16 -top-16 w-44 h-44 rounded-full bg-gradient-to-br ${skillGroup.color} blur-3xl opacity-40 group-hover:opacity-75 transition-opacity duration-300 pointer-events-none`}
-                  />
-
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 dark:bg-white/5 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-bold font-display text-slate-900 dark:text-white">
-                            {skillGroup.category}
-                          </h3>
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            {skillGroup.items.length} Core Technologies
-                          </span>
-                        </div>
-                      </div>
-
-                      {skillGroup.highlight && (
-                        <span className="px-3 py-1 rounded-full text-[11px] font-semibold bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/20 flex items-center gap-1">
-                          <Bot className="w-3.5 h-3.5" />
-                          Advanced AI
-                        </span>
-                      )}
+                  {/* Category Label */}
+                  <div className="md:w-52 shrink-0 flex items-center gap-2.5">
+                    <span
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover/row:scale-110 group-hover/row:-rotate-6 ${
+                        group.highlight
+                          ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-400'
+                          : 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                      }`}
+                    >
+                      <CategoryIcon className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-bold font-display text-slate-900 dark:text-white">
+                        {group.category}
+                      </h3>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
+                        {group.items.length} technologies
+                      </span>
                     </div>
+                  </div>
 
-                    {/* Detailed Technology Stack Pills */}
-                    <div className="space-y-2.5">
-                      {skillGroup.items.map((item) => {
-                        const meta = skillDetails[item] || { level: 'Core', context: '' };
-                        return (
-                          <div
-                            key={item}
-                            className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60 hover:border-indigo-500/40 transition-colors"
+                  {/* Skill Chips */}
+                  <div className="flex flex-wrap gap-3">
+                    {group.items.map((item) => {
+                      const meta = skillDetails[item] || fallbackDetails;
+                      const iconColor = meta.color || `#${meta.brand.hex}`;
+                      const index = chipIndex++;
+                      const scatter = reduceMotion ? { x: 0, y: 0, rotate: 0 } : scatterFor(index);
+
+                      return (
+                        <motion.span
+                          key={item}
+                          custom={{ index, scatter }}
+                          variants={chipVariants}
+                          className="relative block hover:z-20 focus-within:z-20"
+                        >
+                          <span
+                            tabIndex={0}
+                            style={{ '--skill': iconColor }}
+                            className="group interactive-hover relative flex items-center gap-2 pl-1.5 pr-3.5 py-1.5 rounded-xl bg-white/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 text-sm font-semibold text-slate-800 dark:text-slate-100 transition-all duration-300 hover:-translate-y-1.5 hover:scale-110 focus:-translate-y-1.5 focus:scale-110 hover:border-[color:var(--skill)] dark:hover:border-[color:var(--skill)] focus:border-[color:var(--skill)] dark:focus:border-[color:var(--skill)] hover:shadow-[0_12px_30px_-10px_var(--skill)] focus:shadow-[0_12px_30px_-10px_var(--skill)] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
                           >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-bold text-slate-800 dark:text-slate-200 font-sans">
-                                {item}
-                              </span>
-                              <span className="px-2 py-0.5 rounded text-[10px] font-semibold font-mono bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50">
-                                {meta.level}
-                              </span>
-                            </div>
-                            {meta.context && (
-                              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-normal">
-                                {meta.context}
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                            {/* Shine sweep on hover */}
+                            <span aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+                              <span className="absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 -translate-x-full bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent transition-none group-hover:translate-x-[400%] group-hover:transition-transform group-hover:duration-700 group-hover:ease-out" />
+                            </span>
+
+                            {/* Brand logo tile with breathing glow; logo spins on hover */}
+                            <span
+                              className="w-7 h-7 rounded-lg bg-slate-900 dark:bg-slate-950/80 ring-1 ring-white/5 flex items-center justify-center animate-icon-glow"
+                              style={{ color: iconColor, animationDelay: `-${(index * 0.4) % 3}s` }}
+                            >
+                              <SkillIcon
+                                meta={meta}
+                                className="w-4 h-4 transition-transform duration-700 ease-out group-hover:rotate-[360deg] group-hover:scale-110 group-focus:rotate-[360deg]"
+                              />
+                            </span>
+                            <span>{meta.label || item}</span>
+                          </span>
+                        </motion.span>
+                      );
+                    })}
                   </div>
                 </motion.div>
               );
             })}
-          </AnimatePresence>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

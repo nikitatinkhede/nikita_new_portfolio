@@ -1,13 +1,13 @@
 export const portfolioData = {
   personalInfo: {
     name: "Nikita Tinkhede",
-    role: "Frontend & AI Solutions Developer",
+    role: "Software Developer",
     location: "Nagpur, Maharashtra",
     email: "nikitatinkhede80@gmail.com",
     experienceYears: "1.5 Years",
     availability: "Available for Opportunities",
     summary:
-      "Software Developer with 1.5 years of experience building responsive web applications using React.js, Next.js, and Material UI (MUI), with expertise integrating REST APIs. Experienced in AI-powered solutions using LLMs, LangChain, LangGraph, and Retrieval-Augmented Generation (RAG), including single- and multi-agent systems.",
+      "I am Nikita Tinkhede, a Software Developer with 1.5 years of experience building responsive web applications using React.js, Next.js, and Material UI (MUI), with expertise in integrating REST APIs. I also build AI-powered solutions using LLMs, LangChain, LangGraph, and Retrieval-Augmented Generation (RAG), including single- and multi-agent systems.",
     links: {
       email: "mailto:nikitatinkhede80@gmail.com",
       resume: "/Nikita_Tinkhede_Resume.pdf",
@@ -19,30 +19,18 @@ export const portfolioData = {
     {
       category: "Languages",
       items: ["JavaScript", "Python", "SQL"],
-      color: "from-amber-500/20 to-orange-500/20",
-      accent: "text-amber-500 dark:text-amber-400",
-      border: "hover:border-amber-500/50"
     },
     {
       category: "Frontend",
       items: ["React.js", "Next.js", "Material UI (MUI)"],
-      color: "from-blue-500/20 to-cyan-500/20",
-      accent: "text-blue-500 dark:text-cyan-400",
-      border: "hover:border-cyan-500/50"
     },
     {
       category: "Backend & API",
       items: ["FastAPI", "REST API"],
-      color: "from-emerald-500/20 to-teal-500/20",
-      accent: "text-emerald-500 dark:text-emerald-400",
-      border: "hover:border-emerald-500/50"
     },
     {
       category: "Database",
       items: ["MySQL", "PostgreSQL"],
-      color: "from-purple-500/20 to-indigo-500/20",
-      accent: "text-purple-500 dark:text-indigo-400",
-      border: "hover:border-indigo-500/50"
     },
     {
       category: "AI & Machine Learning",
@@ -53,15 +41,12 @@ export const portfolioData = {
         "RAG (Retrieval-Augmented Generation)",
         "AI Agents (Single & Multi-Agent Systems)"
       ],
-      color: "from-violet-500/20 to-fuchsia-500/20",
-      accent: "text-violet-500 dark:text-violet-400",
-      border: "hover:border-violet-500/50",
       highlight: true
     }
   ],
   experience: [
     {
-      role: "Junior Software Developer",
+      role: "Software Developer",
       company: "Valethi Technology Pvt. Ltd.",
       period: "May 2025 – Present",
       location: "Nagpur, Maharashtra",

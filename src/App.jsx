@@ -12,11 +12,12 @@ import { EducationSection } from './components/sections/EducationSection';
 import { CertificationsSection } from './components/sections/CertificationsSection';
 import { ContactSection } from './components/sections/ContactSection';
 import { Footer } from './components/common/Footer';
+import { SectionDivider } from './components/common/SectionHeader';
 
 export function App() {
   return (
     <ThemeProvider>
-      <div className="relative min-h-screen bg-slate-50 dark:bg-[#080B11] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <div className="relative min-h-screen bg-slate-50 dark:bg-[#0B1020] text-slate-900 dark:text-slate-100 transition-colors duration-300">
         {/* Custom Interactive Desktop Cursor */}
         <CustomCursor />
 
@@ -29,12 +30,19 @@ export function App() {
         {/* Main Sectional Content */}
         <main className="relative z-10">
           <HeroSection />
+          <SectionDivider />
           <AboutSection />
+          <SectionDivider />
           <SkillsSection />
+          <SectionDivider />
           <ExperienceSection />
+          <SectionDivider />
           <ProjectsSection />
+          <SectionDivider />
           <EducationSection />
+          <SectionDivider />
           <CertificationsSection />
+          <SectionDivider />
           <ContactSection />
         </main>
 

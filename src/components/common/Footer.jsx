@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUp } from 'lucide-react';
 import { portfolioData } from '../../data/portfolioData';
+import { SocialLinks } from './SocialLinks';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -10,7 +11,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="border-t border-slate-200/80 dark:border-slate-800/80 py-12 px-4 sm:px-6 lg:px-8 relative z-10 bg-white/40 dark:bg-[#080B11]/60 backdrop-blur-md">
+    <footer className="border-t border-slate-200/80 dark:border-slate-800/80 py-12 px-4 sm:px-6 lg:px-8 relative z-10 bg-white/40 dark:bg-[#0B1020]/60 backdrop-blur-md">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold text-xs font-mono">
@@ -38,10 +39,15 @@ export const Footer = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4">
           <div className="text-xs text-slate-500 dark:text-slate-400">
             © {CURRENT_YEAR} Nikita Tinkhede. All rights reserved.
           </div>
+
+          <SocialLinks
+            className="flex items-center gap-2"
+            linkClassName="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-transparent"
+          />
 
           <button
             onClick={scrollToTop}

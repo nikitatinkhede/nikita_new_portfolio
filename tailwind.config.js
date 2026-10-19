@@ -32,9 +32,9 @@ export default {
           600: '#0891b2',
         },
         darkBg: {
-          base: '#080B11',
-          card: '#0F1523',
-          elevated: '#171F33',
+          base: '#0B1020',
+          card: '#131A2E',
+          elevated: '#1A2340',
           subtle: '#1E293B',
         }
       },
@@ -48,6 +48,8 @@ export default {
         'float-slow': 'float 6s ease-in-out infinite',
         'pulse-subtle': 'pulseSubtle 4s ease-in-out infinite',
         'shimmer': 'shimmer 2.5s linear infinite',
+        'icon-glow': 'iconGlow 3s ease-in-out infinite',
+        'blob': 'blob 14s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -61,6 +63,16 @@ export default {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        // Breathing glow in the element's own (brand) text colour
+        iconGlow: {
+          '0%, 100%': { boxShadow: '0 0 6px -2px color-mix(in srgb, currentColor 40%, transparent)' },
+          '50%': { boxShadow: '0 0 18px 1px color-mix(in srgb, currentColor 65%, transparent)' },
+        },
+        blob: {
+          '0%, 100%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(40px, -30px) scale(1.1)' },
+          '66%': { transform: 'translate(-30px, 20px) scale(0.95)' },
         }
       }
     },

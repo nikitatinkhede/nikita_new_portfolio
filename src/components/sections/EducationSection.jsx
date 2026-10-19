@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Medal
 } from 'lucide-react';
+import { SectionHeader } from '../common/SectionHeader';
 
 export const EducationSection = () => {
 
@@ -19,7 +20,7 @@ export const EducationSection = () => {
       score: "CGPA: 9.54 / 10",
       status: "First Class with Distinction",
       icon: GraduationCap,
-      color: "from-indigo-500/20 to-purple-500/20",
+      color: "from-indigo-500/20 to-cyan-500/20",
       accent: "text-indigo-600 dark:text-indigo-400",
       border: "border-indigo-500/30",
       details: [
@@ -35,8 +36,8 @@ export const EducationSection = () => {
       score: "75.00%",
       status: "First Class",
       icon: BookOpen,
-      color: "from-cyan-500/20 to-blue-500/20",
-      accent: "text-cyan-600 dark:text-cyan-400",
+      color: "from-cyan-500/20 to-indigo-500/20",
+      accent: "text-cyan-700 dark:text-cyan-400",
       border: "border-cyan-500/30",
       details: [
         "Core foundational computer science, relational databases (SQL), and programming paradigms.",
@@ -49,19 +50,13 @@ export const EducationSection = () => {
   return (
     <section id="education" className="py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-5xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 mb-3">
-            <GraduationCap className="w-3.5 h-3.5" />
-            <span>Academic Excellence</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
-            Education & Degrees
-          </h2>
-          <p className="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-400">
-            Formal computer science and IT education with outstanding scholastic achievements.
-          </p>
-        </div>
+        <SectionHeader
+          number="05"
+          label="Education"
+          icon={GraduationCap}
+          title="Education"
+          subtitle="My degrees in computer applications and information technology."
+        />
 
         {/* Education Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -86,10 +81,10 @@ export const EducationSection = () => {
                     </div>
 
                     <div className="flex flex-col items-end">
-                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/20 font-mono">
                         {edu.score}
                       </span>
-                      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-1">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">
                         {edu.status}
                       </span>
                     </div>
@@ -108,7 +103,7 @@ export const EducationSection = () => {
                   <ul className="space-y-2 pt-2 border-t border-slate-200/60 dark:border-slate-800/60 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                     {edu.details.map((detail, dIdx) => (
                       <li key={dIdx} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />
                         <span>{detail}</span>
                       </li>
                     ))}
@@ -120,7 +115,7 @@ export const EducationSection = () => {
                     <Calendar className="w-4 h-4 text-slate-400" />
                     <span>Academic Term: {edu.period}</span>
                   </div>
-                  <span className="flex items-center gap-1 text-emerald-500 font-semibold">
+                  <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
                     <Medal className="w-3.5 h-3.5" />
                     Verified Degree
                   </span>

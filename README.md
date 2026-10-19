@@ -1,6 +1,6 @@
 # Nikita Tinkhede — Developer Portfolio
 
-A bespoke, high-performance developer portfolio built for **Nikita Tinkhede**, Junior Software Developer with 1.5 years of industry experience specializing in **React.js**, **Next.js**, **Material UI (MUI)**, **FastAPI**, and **Agentic AI systems** (**LLMs, LangChain, LangGraph, RAG**).
+A bespoke, high-performance developer portfolio built for **Nikita Tinkhede**, Software Developer with 1.5 years of industry experience specializing in **React.js**, **Next.js**, **Material UI (MUI)**, **FastAPI**, and **Agentic AI systems** (**LLMs, LangChain, LangGraph, RAG**).
 
 ---
 
@@ -38,7 +38,7 @@ nikita-portfolio/
 │   │       ├── ExperienceSection.jsx # Valethi Technology timeline & impact breakdown
 │   │       ├── ProjectsSection.jsx   # AI Test Buddy & Candidate Assessment Agent showcases
 │   │       ├── EducationSection.jsx  # MCA (9.54 CGPA) & B.Sc. IT degrees
-│   │       └── ContactSection.jsx    # Real mailto trigger, WhatsApp action & resume preview
+│   │       └── ContactSection.jsx    # Resend email form (api/edata.js), social links & resume preview
 │   ├── context/
 │   │   └── ThemeContext.jsx          # Light/Dark mode provider with localStorage sync
 │   ├── data/
@@ -111,8 +111,8 @@ npm run preview
 ## 🔒 Verified Information Source
 
 All biographical information, career dates, company roles, educational scores, and project specifications are strictly verified from Nikita Tinkhede's official resume:
-- **Title**: Junior Software Developer
+- **Title**: Software Developer
 - **Company**: Valethi Technology Pvt. Ltd. (May 2025 – Present)
 - **Education**: MCA, G.H. Raisoni Amravati University (CGPA: 9.54/10) | B.Sc. IT (75.00%)
-- **Email**: `nikitatinkhede80@gmail.com` | **Phone**: `9307929114`
+- **Email**: `nikitatinkhede80@gmail.com`
 - **Location**: Nagpur, Maharashtra

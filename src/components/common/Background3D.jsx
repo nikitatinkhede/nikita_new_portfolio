@@ -37,7 +37,7 @@ export const Background3D = () => {
     // Color definitions
     const primaryColor = isDark ? 0x818cf8 : 0x6366f1;
     const cyanColor = isDark ? 0x22d3ee : 0x0891b2;
-    const purpleColor = isDark ? 0xc084fc : 0x9333ea;
+    const softIndigoColor = isDark ? 0xa5b4fc : 0x4f46e5;
     const lineColor = isDark ? 0x4f46e5 : 0x6366f1;
 
     // 2. Neural Network Particle Constellation
@@ -63,9 +63,9 @@ export const Background3D = () => {
 
     const particleMaterial = new THREE.PointsMaterial({
       color: primaryColor,
-      size: 0.9,
+      size: 0.75,
       transparent: true,
-      opacity: isDark ? 0.7 : 0.45,
+      opacity: isDark ? 0.5 : 0.3,
       blending: THREE.AdditiveBlending,
     });
 
@@ -110,7 +110,7 @@ export const Background3D = () => {
         opacity: isDark ? 0.28 : 0.14,
       }),
       new THREE.MeshBasicMaterial({
-        color: purpleColor,
+        color: softIndigoColor,
         wireframe: true,
         transparent: true,
         opacity: isDark ? 0.22 : 0.1,

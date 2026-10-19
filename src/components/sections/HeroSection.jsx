@@ -10,11 +10,11 @@ import {
   Terminal,
   Copy,
   Check,
-  Zap,
   Bot,
   Download
 } from 'lucide-react';
 import { portfolioData } from '../../data/portfolioData';
+import { SocialLinks } from '../common/SocialLinks';
 
 const CODE_SNIPPETS = {
   agent: {
@@ -67,7 +67,7 @@ export default function AIAnalyticsDashboard() {
     language: "json",
     code: `{
   "developer": "Nikita Tinkhede",
-  "title": "Frontend & AI Solutions Developer",
+  "title": "Software Developer",
   "location": "Nagpur, Maharashtra",
   "experience": "1.5 Years (Valethi Technology)",
   "education": "MCA (9.54/10 CGPA)",
@@ -133,7 +133,7 @@ export const HeroSection = () => {
                 <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
                   {personalInfo.role} • 1.5 Years Exp
                 </span>
-                <span className="text-slate-300 dark:text-slate-700">|</span>
+                <span aria-hidden="true" className="text-slate-400 dark:text-slate-600">|</span>
                 <span className="text-xs sm:text-sm font-medium text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" />
                   {personalInfo.location}
@@ -144,15 +144,15 @@ export const HeroSection = () => {
             {/* Bold Headline */}
             <motion.div variants={itemVariants} className="space-y-4">
               <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight font-display text-slate-900 dark:text-white leading-[1.08]">
-                Frontend Engineer &{' '}
+                Crafting Modern Web Apps &{' '}
                 <span className="gradient-text-indigo drop-shadow-sm inline-block">
-                  AI Solutions Developer
+                  Agentic AI Systems
                 </span>
               </h1>
               <p className="text-base sm:text-xl md:text-2xl font-light text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-                I'm <span className="font-semibold text-slate-900 dark:text-white">{personalInfo.name}</span>, a developer specializing in responsive web applications with{' '}
+                I am <span className="font-semibold text-slate-900 dark:text-white">{personalInfo.name}</span>, a developer specializing in responsive web applications with{' '}
                 <span className="font-semibold text-indigo-600 dark:text-indigo-400">React.js, Next.js, Material UI</span>, REST APIs, and multi-agent AI workflows using{' '}
-                <span className="font-semibold text-cyan-600 dark:text-cyan-400">LLMs, LangChain, & LangGraph</span>.
+                <span className="font-semibold text-cyan-700 dark:text-cyan-400">LLMs, LangChain, & LangGraph</span>.
               </p>
             </motion.div>
 
@@ -173,10 +173,10 @@ export const HeroSection = () => {
               <a
                 href="#contact"
                 data-cursor-text="HELLO"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-800 dark:text-slate-200 glass-card hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all duration-200 interactive-hover hover:scale-105 active:scale-95 text-sm sm:text-base"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-800 dark:text-slate-200 glass-card hover:border-indigo-500/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 interactive-hover hover:scale-105 active:scale-95 text-sm sm:text-base group"
               >
                 <span>Get in Touch</span>
-                <Mail className="w-4 h-4 text-indigo-500" />
+                <Mail className="w-4 h-4 text-indigo-500 group-hover:-rotate-12 group-hover:scale-110 transition-transform" />
               </a>
 
               <a
@@ -185,21 +185,20 @@ export const HeroSection = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-cursor-text="RESUME"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-800 dark:text-slate-200 glass-card hover:border-indigo-500/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 interactive-hover hover:scale-105 active:scale-95 text-sm sm:text-base"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-800 dark:text-slate-200 glass-card hover:border-cyan-500/50 hover:text-cyan-700 dark:hover:text-cyan-400 transition-all duration-200 interactive-hover hover:scale-105 active:scale-95 text-sm sm:text-base group"
               >
                 <span>Resume PDF</span>
-                <Download className="w-4 h-4 text-indigo-500" />
+                <Download className="w-4 h-4 text-cyan-500 group-hover:translate-y-0.5 transition-transform" />
               </a>
+            </motion.div>
 
-              <a
-                href={`mailto:${personalInfo.email}`}
-                data-cursor-text="EMAIL"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-medium text-slate-600 dark:text-slate-300 glass-panel hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 interactive-hover text-sm sm:text-base"
-                title="Send Email to Nikita Tinkhede"
-              >
-                <Zap className="w-4 h-4 text-amber-500" />
-                <span className="truncate max-w-[190px] sm:max-w-none">{personalInfo.email}</span>
-              </a>
+            {/* Social Profiles */}
+            <motion.div variants={itemVariants}>
+              <SocialLinks
+                className="flex items-center justify-center gap-3"
+                linkClassName="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-white/10"
+                showLabel
+              />
             </motion.div>
           </div>
 
@@ -225,7 +224,7 @@ export const HeroSection = () => {
               </div>
 
               <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 shadow-sm flex items-center gap-4 group hover:border-cyan-500/40 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <Code className="w-6 h-6" />
                 </div>
                 <div>
@@ -238,8 +237,8 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 shadow-sm flex items-center gap-4 group hover:border-purple-500/40 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 shadow-sm flex items-center gap-4 group hover:border-indigo-500/40 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <Bot className="w-6 h-6" />
                 </div>
                 <div>
@@ -252,8 +251,8 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 shadow-sm flex items-center gap-4 group hover:border-emerald-500/40 transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 shadow-sm flex items-center gap-4 group hover:border-cyan-500/40 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <div>
@@ -275,7 +274,7 @@ export const HeroSection = () => {
                   <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
                   <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
                   <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
-                  <span className="ml-2 text-xs font-mono font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <span className="ml-2 text-xs font-mono font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                     <Terminal className="w-3.5 h-3.5" />
                     nikita@portfolio-workspace
                   </span>
@@ -288,7 +287,7 @@ export const HeroSection = () => {
                     className={`px-2.5 py-1 rounded-md text-xs font-mono transition-colors ${
                       activeTab === 'agent'
                         ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-semibold'
-                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
                     agent_graph.py
@@ -297,8 +296,8 @@ export const HeroSection = () => {
                     onClick={() => setActiveTab('frontend')}
                     className={`px-2.5 py-1 rounded-md text-xs font-mono transition-colors ${
                       activeTab === 'frontend'
-                        ? 'bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 shadow-sm font-semibold'
-                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                        ? 'bg-white dark:bg-slate-800 text-cyan-700 dark:text-cyan-400 shadow-sm font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
                     AIAnalytics.jsx
@@ -307,8 +306,8 @@ export const HeroSection = () => {
                     onClick={() => setActiveTab('profile')}
                     className={`px-2.5 py-1 rounded-md text-xs font-mono transition-colors ${
                       activeTab === 'profile'
-                        ? 'bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm font-semibold'
-                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                        ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
                     spec.json
@@ -324,10 +323,10 @@ export const HeroSection = () => {
               </div>
 
               {/* Terminal Bottom Status Bar */}
-              <div className="px-4 py-2 bg-slate-950 text-[11px] font-mono text-slate-400 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="px-4 py-2 bg-slate-950 text-xs font-mono text-slate-400 border-t border-slate-800/80 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  <span>UTF-8 • {CODE_SNIPPETS[activeTab].language.toUpperCase()} • Production Ready</span>
+                  <span>UTF-8 • {CODE_SNIPPETS[activeTab].language.toUpperCase()}</span>
                 </div>
                 <button
                   onClick={handleCopyCode}

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Mail, 
-  MapPin, 
+  Mail,
+  MapPin,
   Send, 
   Copy, 
   Check, 
@@ -11,10 +11,11 @@ import {
   FileText,
   Eye,
   X,
-  AlertCircle,
-  Clock
+  AlertCircle
 } from 'lucide-react';
 import { portfolioData } from '../../data/portfolioData';
+import { SocialLinks } from '../common/SocialLinks';
+import { SectionHeader } from '../common/SectionHeader';
 
 export const ContactSection = () => {
   const { personalInfo } = portfolioData;
@@ -72,19 +73,13 @@ export const ContactSection = () => {
   return (
     <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 mb-3">
-            <Mail className="w-3.5 h-3.5" />
-            <span>Direct Communication</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 dark:text-white tracking-tight">
-            Get In Touch
-          </h2>
-          <p className="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-400">
-            Available for software developer positions, React/Next.js frontend engineering, and AI agent projects.
-          </p>
-        </div>
+        <SectionHeader
+          number="07"
+          label="Contact"
+          icon={Mail}
+          title="Get In Touch"
+          subtitle="Available for software developer roles, React/Next.js frontend work, and AI agent projects."
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Contact Details & Resume Download Column */}
@@ -101,7 +96,7 @@ export const ContactSection = () => {
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                   <FileText className="w-5 h-5" />
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
                   Verified PDF
                 </span>
               </div>
@@ -146,7 +141,7 @@ export const ContactSection = () => {
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-[11px] text-slate-400 font-medium">Direct Email</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Direct Email</div>
                     <a
                       href={`mailto:${personalInfo.email}`}
                       className="text-sm font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors block truncate max-w-[210px] sm:max-w-xs"
@@ -171,58 +166,28 @@ export const ContactSection = () => {
               </div>
             </div>
 
-            {/* Availability & Response Time Card */}
-            <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] text-slate-400 font-medium">Response Time</div>
-                    <div className="text-sm font-bold text-slate-900 dark:text-white">
-                      Within 24 Hours
-                    </div>
-                  </div>
-                </div>
-
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                  {personalInfo.availability}
-                </span>
-              </div>
-
-              <div className="pt-1 flex items-center gap-2">
-                <a
-                  href={personalInfo.links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-slate-200/60 dark:border-slate-700/60"
-                >
-                  <span>LinkedIn</span>
-                </a>
-
-                <a
-                  href={personalInfo.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-slate-200/60 dark:border-slate-700/60"
-                >
-                  <span>GitHub</span>
-                </a>
-              </div>
-            </div>
-
             {/* Location Card */}
             <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 flex items-center justify-center">
                 <MapPin className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-[11px] text-slate-400 font-medium">Location</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Location</div>
                 <div className="text-sm font-bold text-slate-900 dark:text-white">
                   {personalInfo.location}
                 </div>
               </div>
+            </div>
+
+            {/* Social Profiles Card */}
+            <div className="glass-card p-5 rounded-2xl border border-slate-200/80 dark:border-white/5 space-y-3">
+              <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">Social Profiles</div>
+              <SocialLinks
+                className="grid grid-cols-2 gap-2"
+                linkClassName="py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center gap-2"
+                iconClassName="w-3.5 h-3.5"
+                showLabel
+              />
             </div>
           </motion.div>
 
@@ -245,10 +210,6 @@ export const ContactSection = () => {
                     Connect directly with Nikita for job offers, discussions, or projects.
                   </p>
                 </div>
-                <span className="text-[11px] font-mono text-emerald-500 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Active Inbox
-                </span>
               </div>
 
               {submitSuccess && (
@@ -276,7 +237,7 @@ export const ContactSection = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label htmlFor="name" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                      Your Name <span className="text-red-500">*</span>
+                      Your Name <span className="text-red-600 dark:text-red-400">*</span>
                     </label>
                     <input
                       id="name"
@@ -291,7 +252,7 @@ export const ContactSection = () => {
 
                   <div className="space-y-1.5">
                     <label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                      Your Email <span className="text-red-500">*</span>
+                      Your Email <span className="text-red-600 dark:text-red-400">*</span>
                     </label>
                     <input
                       id="email"
@@ -307,7 +268,7 @@ export const ContactSection = () => {
 
                 <div className="space-y-1.5">
                   <label htmlFor="subject" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Subject <span className="text-red-500">*</span>
+                    Subject <span className="text-red-600 dark:text-red-400">*</span>
                   </label>
                   <input
                     id="subject"
@@ -322,7 +283,7 @@ export const ContactSection = () => {
 
                 <div className="space-y-1.5">
                   <label htmlFor="message" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Message <span className="text-red-500">*</span>
+                    Message <span className="text-red-600 dark:text-red-400">*</span>
                   </label>
                   <textarea
                     id="message"
