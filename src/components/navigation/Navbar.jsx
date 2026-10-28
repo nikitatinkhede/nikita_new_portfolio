@@ -60,10 +60,14 @@ export const Navbar = () => {
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
-    const targetId = href.substring(1);
-    const targetEl = document.getElementById(targetId);
-    if (targetEl) {
-      targetEl.scrollIntoView({ behavior: 'smooth' });
+    if (window.__lenis) {
+      window.__lenis.scrollTo(href, { offset: -80, duration: 1.2 });
+    } else {
+      const targetId = href.substring(1);
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
     }
     setIsMobileMenuOpen(false);
   };

@@ -9,8 +9,6 @@ import {
   MessageSquare,
   Download,
   FileText,
-  Eye,
-  X,
   AlertCircle
 } from 'lucide-react';
 import { portfolioData } from '../../data/portfolioData';
@@ -26,10 +24,45 @@ export const ContactSection = () => {
     subject: '',
     message: '',
   });
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [showResumeModal, setShowResumeModal] = useState(false);
+
+  const validateField = (field, value) => {
+    const v = (value || '').trim();
+    if (field === 'name') {
+      if (!v) return 'Please enter your name.';
+      if (v.length < 2) return 'Name must be at least 2 characters.';
+    }
+    if (field === 'email') {
+      if (!v) return 'Please enter your email.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Please enter a valid email address.';
+    }
+    if (field === 'subject') {
+      if (!v) return 'Please enter a subject.';
+    }
+    if (field === 'message') {
+      if (!v) return 'Please enter your message.';
+      if (v.length < 10) return 'Message should be at least 10 characters.';
+    }
+    return '';
+  };
+
+  const handleFieldChange = (field, value) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+    if (touched[field] || errors[field]) {
+      const err = validateField(field, value);
+      setErrors((prev) => ({ ...prev, [field]: err }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const err = validateField(field, formState[field]);
+    setErrors((prev) => ({ ...prev, [field]: err }));
+  };
 
   const handleCopy = (text, type) => {
     navigator.clipboard.writeText(text);
@@ -39,6 +72,23 @@ export const ContactSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setTouched({ name: true, email: true, subject: true, message: true });
+
+    const newErrors = {};
+    ['name', 'email', 'subject', 'message'].forEach((field) => {
+      const err = validateField(field, formState[field]);
+      if (err) newErrors[field] = err;
+    });
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      const firstInvalid = ['name', 'email', 'subject', 'message'].find((f) => newErrors[f]);
+      if (firstInvalid) {
+        document.getElementById(firstInvalid)?.focus();
+      }
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError(null);
     setSubmitSuccess(false);
@@ -61,6 +111,8 @@ export const ContactSection = () => {
 
       setSubmitSuccess(true);
       setFormState({ name: '', email: '', subject: '', message: '' });
+      setTouched({});
+      setErrors({});
       setTimeout(() => setSubmitSuccess(false), 8000);
     } catch (error) {
       console.error('Contact form submission error:', error);
@@ -111,26 +163,17 @@ export const ContactSection = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 pt-1">
+              <div className="pt-1">
                 <a
                   href="/Nikita_Tinkhede_Resume.pdf"
                   download="Nikita_Tinkhede_Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-2.5 px-4 rounded-xl font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/25 interactive-hover"
+                  className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs text-white bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/25 interactive-hover"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Resume PDF</span>
                 </a>
-
-                <button
-                  onClick={() => setShowResumeModal(true)}
-                  className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors interactive-hover"
-                  title="Preview Resume"
-                  aria-label="Preview resume in modal"
-                >
-                  <Eye className="w-4 h-4" />
-                </button>
               </div>
             </div>
 
@@ -234,7 +277,7 @@ export const ContactSection = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} noValidate className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label htmlFor="name" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
@@ -243,12 +286,29 @@ export const ContactSection = () => {
                     <input
                       id="name"
                       type="text"
-                      required
                       value={formState.name}
-                      onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                      onChange={(e) => handleFieldChange('name', e.target.value)}
+                      onBlur={() => handleBlur('name')}
                       placeholder="e.g. John Doe"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 text-sm transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-sm transition-all ${
+                        errors.name
+                          ? 'border-rose-500/80 dark:border-rose-500/70 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-500/[0.03] dark:bg-rose-500/[0.06]'
+                          : 'border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 bg-slate-50 dark:bg-slate-900/60'
+                      }`}
                     />
+                    <AnimatePresence>
+                      {errors.name && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -4, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: 'auto' }}
+                          exit={{ opacity: 0, y: -4, height: 0 }}
+                          className="flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 pt-0.5"
+                        >
+                          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>{errors.name}</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <div className="space-y-1.5">
@@ -258,12 +318,29 @@ export const ContactSection = () => {
                     <input
                       id="email"
                       type="email"
-                      required
                       value={formState.email}
-                      onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                      onChange={(e) => handleFieldChange('email', e.target.value)}
+                      onBlur={() => handleBlur('email')}
                       placeholder="john@example.com"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 text-sm transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-sm transition-all ${
+                        errors.email
+                          ? 'border-rose-500/80 dark:border-rose-500/70 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-500/[0.03] dark:bg-rose-500/[0.06]'
+                          : 'border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 bg-slate-50 dark:bg-slate-900/60'
+                      }`}
                     />
+                    <AnimatePresence>
+                      {errors.email && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -4, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: 'auto' }}
+                          exit={{ opacity: 0, y: -4, height: 0 }}
+                          className="flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 pt-0.5"
+                        >
+                          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>{errors.email}</span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
 
@@ -274,12 +351,29 @@ export const ContactSection = () => {
                   <input
                     id="subject"
                     type="text"
-                    required
                     value={formState.subject}
-                    onChange={(e) => setFormState({ ...formState, subject: e.target.value })}
+                    onChange={(e) => handleFieldChange('subject', e.target.value)}
+                    onBlur={() => handleBlur('subject')}
                     placeholder="Software Developer Role / Project Consultation"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 text-sm transition-all"
+                    className={`w-full px-4 py-3 rounded-xl border text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-sm transition-all ${
+                      errors.subject
+                        ? 'border-rose-500/80 dark:border-rose-500/70 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-500/[0.03] dark:bg-rose-500/[0.06]'
+                        : 'border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 bg-slate-50 dark:bg-slate-900/60'
+                    }`}
                   />
+                  <AnimatePresence>
+                    {errors.subject && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -4, height: 0 }}
+                        className="flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 pt-0.5"
+                      >
+                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{errors.subject}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <div className="space-y-1.5">
@@ -289,12 +383,29 @@ export const ContactSection = () => {
                   <textarea
                     id="message"
                     rows={4}
-                    required
                     value={formState.message}
-                    onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                    onChange={(e) => handleFieldChange('message', e.target.value)}
+                    onBlur={() => handleBlur('message')}
                     placeholder="Tell Nikita about your requirements, role details, or timeline..."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 text-sm transition-all resize-none"
+                    className={`w-full px-4 py-3 rounded-xl border text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-sm transition-all resize-none ${
+                      errors.message
+                        ? 'border-rose-500/80 dark:border-rose-500/70 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-500/[0.03] dark:bg-rose-500/[0.06]'
+                        : 'border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 bg-slate-50 dark:bg-slate-900/60'
+                    }`}
                   />
+                  <AnimatePresence>
+                    {errors.message && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4, height: 0 }}
+                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                        exit={{ opacity: 0, y: -4, height: 0 }}
+                        className="flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 pt-0.5"
+                      >
+                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{errors.message}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <button
@@ -317,57 +428,7 @@ export const ContactSection = () => {
         </div>
       </div>
 
-      {/* In-Browser Resume Preview Modal */}
-      <AnimatePresence>
-        {showResumeModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-slate-200 dark:border-slate-800"
-            >
-              <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-indigo-500" />
-                  <span className="font-bold text-slate-900 dark:text-white">
-                    Nikita Tinkhede — Resume Preview
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href="/Nikita_Tinkhede_Resume.pdf"
-                    download="Nikita_Tinkhede_Resume.pdf"
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white flex items-center gap-1.5"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download</span>
-                  </a>
-                  <button
-                    onClick={() => setShowResumeModal(false)}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-white"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
 
-              <div className="flex-1 w-full bg-slate-100 dark:bg-slate-950 p-2">
-                <iframe
-                  src="/Nikita_Tinkhede_Resume.pdf#toolbar=0"
-                  className="w-full h-full rounded-2xl border-0"
-                  title="Nikita Tinkhede Resume"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 };

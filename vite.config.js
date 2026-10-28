@@ -52,4 +52,14 @@ function vercelApiDev() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), vercelApiDev()],
+  ssr: {
+    // Don't bundle Node-only packages used in /api serverless functions
+    external: ['resend'],
+  },
+  server: {
+    watch: {
+      // Don't let changes in /api trigger full-page HMR reloads
+      ignored: ['**/api/**'],
+    },
+  },
 })

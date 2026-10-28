@@ -12,7 +12,7 @@ export const portfolioData = {
       email: "mailto:nikitatinkhede80@gmail.com",
       resume: "/Nikita_Tinkhede_Resume.pdf",
       github: "https://github.com/nikitatinkhede",
-      linkedin: "https://www.linkedin.com/in/nikita-tinkhede-b353a8298",
+      linkedin: "https://www.linkedin.com/in/nikita-tinkhede-b353a8298/",
     }
   },
   skills: [

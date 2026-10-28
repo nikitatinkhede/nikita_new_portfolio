@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  ArrowRight, 
+  ArrowDown, 
   Mail, 
   MapPin, 
   Briefcase, 
@@ -163,15 +163,27 @@ export const HeroSection = () => {
             >
               <a
                 href="#projects"
+                onClick={(e) => {
+                  if (window.__lenis) {
+                    e.preventDefault();
+                    window.__lenis.scrollTo('#projects', { offset: -80, duration: 1.2 });
+                  }
+                }}
                 data-cursor-text="VIEW"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-500/30 transition-all duration-200 interactive-hover hover:scale-105 active:scale-95 text-sm sm:text-base group"
               >
                 <span>Explore Projects</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
               </a>
 
               <a
                 href="#contact"
+                onClick={(e) => {
+                  if (window.__lenis) {
+                    e.preventDefault();
+                    window.__lenis.scrollTo('#contact', { offset: -80, duration: 1.2 });
+                  }
+                }}
                 data-cursor-text="HELLO"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-800 dark:text-slate-200 glass-card hover:border-indigo-500/50 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 interactive-hover hover:scale-105 active:scale-95 text-sm sm:text-base group"
               >

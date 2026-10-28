@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 import { ThemeProvider } from './context/ThemeContext';
 import { CustomCursor } from './components/common/CustomCursor';
 import { Background3D } from './components/common/Background3D';
@@ -15,6 +17,34 @@ import { Footer } from './components/common/Footer';
 import { SectionDivider } from './components/common/SectionHeader';
 
 export function App() {
+  useEffect(() => {
+    // Ultra-smooth momentum scroll with Lenis
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.8,
+    });
+
+    window.__lenis = lenis;
+
+    let animationFrameId;
+    function raf(time) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+    animationFrameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+      delete window.__lenis;
+    };
+  }, []);
+
   return (
     <ThemeProvider>
       <div className="relative min-h-screen bg-slate-50 dark:bg-[#0B1020] text-slate-900 dark:text-slate-100 transition-colors duration-300">

@@ -7,7 +7,21 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 export const Footer = () => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.__lenis) {
+      window.__lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    if (window.__lenis) {
+      window.__lenis.scrollTo(href, { offset: -80, duration: 1.2 });
+    } else {
+      const targetEl = document.querySelector(href);
+      if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -32,6 +46,7 @@ export const Footer = () => {
             <a
               key={item.name}
               href={item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
               className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
             >
               {item.name}
